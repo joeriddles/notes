@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Generate TODOs",
+            "type": "python",
+            "request": "launch",
+            "module": "find_todos",
+            "justMyCode": true,
+            "console": "internalConsole"
+        }
+    ]
+}
