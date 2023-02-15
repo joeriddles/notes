@@ -1,6 +1,8 @@
 """Find all pending and completed markdown task items and aggregate into one markdown file."""
 import pathlib
 import re
+import sys
+import time
 from typing import Optional, Tuple
 
 
@@ -62,9 +64,15 @@ def parse_todos(lines) -> Tuple[list[str], list[str]]:
 
 
 if __name__ == "__main__":
-    todos = find_todos("notes", exclude="TODO.md")
-    # for lst in todos:
-    #     for item in lst:
-    #         print(item)
-    #     print()
-    save_todos(*todos, path="notes/TODO.md")
+    watch = False
+    if sys.argv[-1] == "--watch":
+        watch = True
+
+    if watch:
+        while True:
+            todos = find_todos("notes", exclude="TODO.md")
+            save_todos(*todos, path="notes/TODO.md")
+            time.sleep(1)
+    else:
+        todos = find_todos("notes", exclude="TODO.md")
+        save_todos(*todos, path="notes/TODO.md")

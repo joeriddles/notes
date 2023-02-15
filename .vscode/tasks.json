@@ -11,6 +11,17 @@
                 "reveal": "silent",
                 "showReuseMessage": false
             }
+        },
+        {
+            "label": "Watch TODO",
+            "command": "python",
+            "type": "shell",
+            "args": ["-m", "find_todos", "--watch"],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false
+            }
         }
     ]
 }
