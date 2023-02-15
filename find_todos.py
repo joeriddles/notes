@@ -41,6 +41,8 @@ def find_todos(path: str = ".", exclude: Optional[str] = None) -> Tuple[list[str
             continue
         with markdown_path.open("r", encoding="utf-8") as markdown_file:
             markdown_lines = markdown_file.readlines()
+        if markdown_lines and "exclude TODO" in markdown_lines[0]:
+            continue
         pending_todos, completed_todos = parse_todos(markdown_lines)
         all_pending_todos.extend(pending_todos)
         all_completed_todos.extend(completed_todos)
