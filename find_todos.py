@@ -44,6 +44,9 @@ def find_todos(
     all_completed_todos: list = []
     folder_path = pathlib.Path(path)
     for markdown_path in folder_path.rglob("**/*.md"):
+        dir_contains_excludes_file = (markdown_path.parent / ".exclude_todos").exists()
+        if dir_contains_excludes_file:
+            continue
         if markdown_path.name == exclude:
             continue
         with markdown_path.open("r", encoding="utf-8") as markdown_file:

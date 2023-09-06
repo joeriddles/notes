@@ -6,6 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "find_todos",
+            "args": ["--exclude-done"],
             "justMyCode": true,
             "console": "internalConsole"
         }
