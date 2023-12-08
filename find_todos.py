@@ -18,6 +18,9 @@ class Todo:
     filename: str = ""
     is_completed: bool = False
 
+    def __str__(self) -> str:
+        return self.value
+
     @classmethod
     def from_str(cls, value: str) -> Todo:
         rmatch = TODO_PATTERN.match(value)
@@ -32,32 +35,38 @@ class Todo:
         is_completed = rmatch.groups()[0].casefold() == "x"
         return Todo(value, "", is_completed)
     
-    def to_string(self, exclude_links: bool) -> str:
-        result = self.value
-        if not exclude_links:
-            result = f"[[{self.filename}]]" + result
+    def to_markdown(self, exclude_links: bool = False) -> str:
+        result = str(self)
+
+        if self.filename and not exclude_links:
+            result = f"[[{self.filename}]] {result}"
+        
+        result = f"- [x] {result}" if self.is_completed else f"- [ ] {result}"
         return result
 
 
 def save_todos(
     todos: list[Todo],
     path: str = "TODO.md",
-    exclude_done: bool = False,
+    include_done: bool = False,
     exclude_links: bool = False,
 ):
     pending_todos = [_ for _ in todos if not _.is_completed]
     completed_todos = [_ for _ in todos if _.is_completed]
     
     with open(path, "w", encoding="utf-8") as todo_file:
-        todo_file.write("# TODOs\n")
-        
         if pending_todos:
-            todo_file.write("## Pending\n")
-            [todo_file.write(f"- [ ] {todo.to_string(exclude_links)}\n") for todo in pending_todos]
+            if not include_done:
+                # only include level 2 headers if multiple of them
+                todo_file.write("## Pending\n")
+            
+            for todo in pending_todos:
+                todo_file.write(todo.to_markdown(exclude_links) + "\n")
         
-        if not exclude_done and completed_todos:
+        if include_done and completed_todos:
             todo_file.write("\n## Completed\n")
-            [todo_file.write(f"- [x] {todo.to_string(exclude_links)}\n") for todo in completed_todos]    
+            for todo in completed_todos:
+                todo_file.write(todo.to_markdown(exclude_links) + "\n")
 
 
 def find_todos(path: str = ".", exclude: Optional[str] = None) -> list[Todo]:
@@ -86,7 +95,8 @@ def find_todos(path: str = ".", exclude: Optional[str] = None) -> list[Todo]:
         with markdown_path.open("r", encoding="utf-8") as markdown_file:
             markdown_lines = markdown_file.readlines()
 
-        if markdown_lines and "exclude TODO" in markdown_lines[0]:
+        contains_exclude_comment = any(["<!-- exclude TODO -->" in line for line in markdown_lines])
+        if contains_exclude_comment:
             continue
 
         todos = parse_todos(markdown_lines)
@@ -110,7 +120,7 @@ def parse_todos(lines) -> list[Todo]:
 
 if __name__ == "__main__":
     watch = "--watch" in sys.argv
-    exclude_done = "--exclude-done" in sys.argv
+    include_done = "--include-done" in sys.argv
     exclude_links = "--exclude-links" in sys.argv
 
     def main():
@@ -118,7 +128,7 @@ if __name__ == "__main__":
         save_todos(
             todos,
             path="notes/TODO.md",
-            exclude_done=exclude_done,
+            include_done=include_done,
             exclude_links=exclude_links,
         )
 

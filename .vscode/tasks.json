@@ -5,7 +5,7 @@
             "label": "Update TODO",
             "command": "python",
             "type": "shell",
-            "args": ["-m", "find_todos", "--exclude-done"],
+            "args": ["-m", "find_todos"],
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -16,7 +16,7 @@
             "label": "Watch TODO",
             "command": "python",
             "type": "shell",
-            "args": ["-m", "find_todos", "--watch", "--exclude-done"],
+            "args": ["-m", "find_todos", "--watch"],
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
