@@ -4,9 +4,15 @@
 
 **Generate `TODO.md` file:**
 ```bash
-python find_todos.py
+make
 ```
 
-## TODO
-- [ ] Add ability to complete TODO items from `TODO.md` and automatically update the note file the TODO item came from
-- [ ] Add better CLI support using [Typer](https://typer.tiangolo.com/)
+**Watch markdown files:**
+```bash
+make watch
+```
+
+**Run tests:**
+```bash
+make test
+```
