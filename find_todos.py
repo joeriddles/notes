@@ -6,6 +6,7 @@ import pathlib
 import re
 import sys
 import time
+from collections import defaultdict
 from typing import Optional
 
 
@@ -56,14 +57,25 @@ def save_todos(
     
     with open(path, "w", encoding="utf-8") as todo_file:
         if pending_todos:
-            if not include_done:
+            todos_by_filename: dict[str, list[Todo]] = defaultdict(list)
+            for todo in pending_todos:
+                todos_by_filename[todo.filename].append(todo)
+
+            if include_done:
                 # only include level 2 headers if multiple of them
                 todo_file.write("## Pending\n")
             
-            for todo in pending_todos:
-                todo_file.write(todo.to_markdown(exclude_links) + "\n")
+            for filename, todos_for_filename in todos_by_filename.items():
+                todo_file.write(f"- [[{filename}]]")
+                for todo in todos_for_filename:
+                    line = "    " + todo.to_markdown(exclude_links=True) + "\n"
+                    todo_file.write(line)
         
-        if include_done and completed_todos:
+        if include_done and any(completed_todos):
+            todos_by_filename: dict[str, list[Todo]] = defaultdict(list)
+            for todo in completed_todos:
+                todos_by_filename[todo.filename].append(todo)
+
             todo_file.write("\n## Completed\n")
             for todo in completed_todos:
                 todo_file.write(todo.to_markdown(exclude_links) + "\n")
